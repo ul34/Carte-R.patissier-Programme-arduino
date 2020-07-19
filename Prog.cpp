@@ -24,12 +24,11 @@ long varCompteur = 0;
 
 void setup() {
   DDRB  |= B00100000;
-   Serial.begin(57600);
-   
+  Serial.begin(57600);
   PCICR  |= (1 << PCIE0);
   PCMSK0 |= (1 << PCINT0); 
   TCCR2A |= (0 << 0);
- TCCR2A |= (0 << 1);
+  TCCR2A |= (0 << 1);
   TCCR2B = 0b00000010;       
   TIFR2 = 0b00000001;       
   TCNT2 = 56;        
@@ -39,15 +38,15 @@ void setup() {
 void loop() {
 
     PO = analogRead(0)+500;
-      if(PO >= 1023) PO = 1023;
+    if(PO >= 1023) PO = 1023;
     VA = analogRead(2);
-      if(PO < 550){   
+      
+        if(PO < 550){   
       ET = 0;
        varCompteur = 0;
      }else{
        ET = 1;
-         
-     } 
+       } 
      
   if(micros()-GOM >= 4000)   {
     GOM = micros();
@@ -75,37 +74,31 @@ void loop() {
       
      w = Com/0.000228; 
 
-      if ( TIFR2  & B00000001 ) {        
+  if ( TIFR2  & B00000001 ) {        
     TCNT2 = 56;         
    if(RO == 1){   
     varCompteur = 0;
     RO = 0;
    }
-
-   if(ROL == 1){   
+  if(ROL == 1){   
     varCompteur = 0;
     ROL = 0;
    }
-     
     TIFR2 = B00000001;
     varCompteur++;  
-    
     }
 
 
-      if (  varCompteur >= w && flag == 1 && ET == 1) {
-     
-      
-      PORTB |= B00100000;  
+   if (  varCompteur >= w && flag == 1 && ET == 1) {
+     PORTB |= B00100000;  
      flag = 0;
      LL = 1;
      varCompteur = 0;
      ROL = 1;
- } 
+     } 
 
  if (LL == 1 &&  varCompteur >= 2 ) {
     PORTB &= B00000000; 
-       
     varCompteur = 0;
     LL = 0;
    }
@@ -118,40 +111,17 @@ ISR(PCINT0_vect)
 {
     
 
-    // Channel 1 -------------------------------------------------
-    if (PINB & B00000001) {                                        // Is input 8 high ?
+ if (PINB & B00000001) {                                         
        
-        
-        timer = micros() ; 
-         
+       timer = micros() ; 
          
         }else  {
 
-          
-           flag = 1;
+             flag = 1;
              varCompteur = 0;
-              RO = 1;
-           
-        }
-
- if (PINB & B00000001) {                                        // Is input 8 high ?
-       
-        Q += 1 ; 
-          
-        
-         }else if ( Q >= 1) {
-           Q = 0 ; 
-           pulse_durationa = micros()- timera;
-          
-           timera = micros() ; 
              RO = 1;
-            varCompteur = 0;
-        }
+           }
+
  
-        
-   
-      
-      
-        
-    }  
+ }  
   
